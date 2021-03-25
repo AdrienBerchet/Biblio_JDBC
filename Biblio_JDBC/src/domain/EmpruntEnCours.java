@@ -67,6 +67,10 @@ public class EmpruntEnCours {
 		
 	}
 
+	public EmpruntEnCours(java.sql.Date dateEmprunt, Integer idUtil, Integer idEx) {
+		this.dateEmprunt = dateEmprunt;
+	}
+
 	public EnumStatusExemplaire getEnumStatusExemplaire() {
 		return EnumStatusExemplaire;
 	}

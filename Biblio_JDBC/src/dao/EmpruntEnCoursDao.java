@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 import control.InterfaceEmpruntEnCoursDao;
+import domain.BiblioException;
 import domain.EmpruntEnCours;
 import domain.PingJdbc;
 import domain.Utilisateur;
@@ -131,7 +132,7 @@ public class EmpruntEnCoursDao implements InterfaceEmpruntEnCoursDao {
 	
 
 	@Override
-	public EmpruntEnCoursDb findByKey (int idExemplaire) {
+	public EmpruntEnCoursDb findByKey (int idExemplaire) throws BiblioException {
 		
 		PreparedStatement pstm;
 		
@@ -175,7 +176,7 @@ public class EmpruntEnCoursDao implements InterfaceEmpruntEnCoursDao {
 	
 	
 	@Override
-	public List<EmpruntEnCoursDb> findByUtilisateur(Utilisateur u) throws SQLException {
+	public List<EmpruntEnCoursDb> findByUtilisateur(Utilisateur u) throws SQLException, BiblioException {
 		Statement stmt2 = jdbc.getConnection("bibliothecaire.properties").createStatement();
 		List<EmpruntEnCoursDb> listeEmpruntEnCoursDb = new ArrayList<EmpruntEnCoursDb>();
 		ResultSet result2 = stmt2.executeQuery("SELECT * FROM EMPRUNTENCOURS WHERE IDUTILISATEUR = " + u.getIdUtilisateur());			
@@ -192,6 +193,7 @@ public class EmpruntEnCoursDao implements InterfaceEmpruntEnCoursDao {
 		return listeEmpruntEnCoursDb;
 	}
 
+	
 	@Override
 	public void removeEmpruntEnCours(int idExemplaire) throws SQLException {
 		

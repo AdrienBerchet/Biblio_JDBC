@@ -1,7 +1,10 @@
 package dao;
 
 
+import control.InterfaceUtilisateursDao;
+import domain.BiblioException;
 import domain.EmpruntEnCours;
+import domain.PingJdbc;
 
 
 
@@ -12,10 +15,16 @@ public class EmpruntEnCoursDb extends EmpruntEnCours{
 	
 
 	
-	public EmpruntEnCoursDb(Integer idEx, Integer idU) {
+	public EmpruntEnCoursDb(Integer idEx, Integer idU) throws BiblioException {
 		super();
-		setIdExemp(idEx);
-		setIdUtil(idU);		
+		PingJdbc pjdbc = new PingJdbc();
+		pjdbc.getConnection("bibliothecaire.properties");
+		InterfaceUtilisateursDao udao = new UtilisateursDao(pjdbc);
+		setU(udao.findByKey(idU));
+		InterfaceUtilisateursDao edao = new UtilisateursDao(pjdbc);
+		setU(edao.findByKey(idEx));
+		//setIdExemp(idEx);
+		//setIdUtil(idU);		
 	}
 
 	public Integer getIdExemp() {

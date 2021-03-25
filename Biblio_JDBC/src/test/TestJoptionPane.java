@@ -6,9 +6,11 @@ import java.sql.SQLException;
 
 import javax.swing.JOptionPane;
 
+import control.InterfaceEmpruntEnCoursDao;
+import control.InterfaceExemplaireDao;
 import dao.EmpruntArchiveDao;
 import dao.EmpruntEnCoursDao;
-import dao.EmpruntEnCoursDb;
+
 import dao.ExemplairesDao;
 import dao.UtilisateursDao;
 import domain.BiblioException;
@@ -16,7 +18,7 @@ import domain.EmpruntArchive;
 import domain.EmpruntEnCours;
 import domain.Exemplaire;
 import domain.PingJdbc;
-import domain.Utilisateur;
+
 
 public class TestJoptionPane {
 	
@@ -26,7 +28,7 @@ public class TestJoptionPane {
 		pjdbc.getConnection("bibliothecaire.properties");
 		Integer choixFinal;
 		do {
-		String[] choix = {"Consulter un livre", "Consulter un utilisateur", "Emprunter un livre", "Disponibilité d'un exemplaire","Rendre un livre", "Emprunts en cours","Emprunts Archivés"};
+		String[] choix = {"Consulter un livre", "Consulter un utilisateur", "Emprunter un livre", "Disponibilité d'un exemplaire","Rendre un livre","Emprunts Archivés"};
 		int option = JOptionPane.showOptionDialog(null, "Choisissez parmi les options suivantes", "Bibliothèque_JDBC", 0, JOptionPane.QUESTION_MESSAGE, null, choix, "Applicatif Bibliothèque");
 		
 		
@@ -46,35 +48,27 @@ public class TestJoptionPane {
 			EmpruntEnCoursDao empruntEnCoursDao = new EmpruntEnCoursDao(pjdbc);
 			System.out.println(empruntEnCoursDao.insertEmpruntEnCours(new EmpruntEnCours(utilisateurJOption.findByKey(Integer.parseInt(x)), exemplaireJOption.findByKey(Integer.parseInt(y)))));
 		} else if (option == 3) {
-			EmpruntEnCoursDao empruntEnCours = new EmpruntEnCoursDao(pjdbc);
-			String e = JOptionPane.showInputDialog(null, "Entrez l'identifiant de l'exemplaire à rendre ( de 1 à 8 ): ","Retour d'un emprunt", JOptionPane.INFORMATION_MESSAGE);
-			empruntEnCours.removeEmpruntEnCours(Integer.parseInt(e));
+			ExemplairesDao exemplaireJOption = new ExemplairesDao(pjdbc);
+			String e = JOptionPane.showInputDialog(null, "Entrez l'identifiant de l'exemplaire ( de 1 à 8 ): ","Disponinibilité exemplaire", JOptionPane.INFORMATION_MESSAGE);
+			System.out.println(" L'exemplaire demandé est : " + exemplaireJOption.findByKey(Integer.parseInt(e)).getEnumStatusExemplaire());
 			//EmpruntArchiveDao empruntArchive = new EmpruntArchiveDao(PingJdbc.getConnectionByProperties());
 		} else if (option == 4) {
-			ExemplairesDao exemplaireDispoJOption = new ExemplairesDao(pjdbc);
-			for(Exemplaire e : exemplaireDispoJOption.findAll())
-			System.out.println(e);
+			String retourEx = JOptionPane.showInputDialog(null, "Entrez l'identifiant à restituer ( de 1 à 8 ): ","Retour d'emprunt", JOptionPane.INFORMATION_MESSAGE);
+			InterfaceEmpruntEnCoursDao eecd = new EmpruntEnCoursDao(pjdbc);
+			eecd.removeEmpruntEnCours(Integer.parseInt(retourEx));
+			System.out.println("\nL'exemplaire rendu  est : " + Integer.parseInt(retourEx) + "\n");
+			InterfaceExemplaireDao eecd2 = new ExemplairesDao(pjdbc);
+			System.out.println("\nListe des exemplaires disponibles : \n");
+			for(Exemplaire ex1 : eecd2.findAll()) {
+				if ( ex1.getEnumStatusExemplaire().toString().equalsIgnoreCase("DISPONIBLE")) {
+					System.out.println("Exemplaire id : " + ex1 +"\n");
+				}
+			}
 		} else if (option == 5) {
 			EmpruntArchiveDao empruntArchive = new EmpruntArchiveDao(pjdbc);
 			for(EmpruntArchive emp : empruntArchive.findAll())
 			System.out.println(emp);
-		} else if (option == 6) {
-			EmpruntArchiveDao empruntArchive = new EmpruntArchiveDao(pjdbc);
-			String f = JOptionPane.showInputDialog(null, "Entrez l'identifiant de l'emprunteur (Employé = 2, 3 et 6 ou Adhérent = 1, 4, 5, 7 et 8) : ","Visualisation des archives", JOptionPane.INFORMATION_MESSAGE);
-			for(EmpruntArchive emp1 : empruntArchive.findByKey(Integer.parseInt(f)))
-			System.out.println(emp1);
-		} else if (option == 7) {
-			String g = JOptionPane.showInputDialog(null, "Entrez l'identifiant de l'emprunteur (Employé = 2, 3 et 6 ou Adhérent = 1, 4, 5, 7 et 8) : ","Visualisation des emprunts en cours", JOptionPane.INFORMATION_MESSAGE);
-			EmpruntEnCoursDao eEc = new EmpruntEnCoursDao(pjdbc);
-			UtilisateursDao udao = new UtilisateursDao(pjdbc);
-			Utilisateur u = udao.findByKey(Integer.parseInt(g));
-			for(EmpruntEnCoursDb empCours: eEc.findByUtilisateur(u)) {
-				
-			System.out.println(empCours);
-			}
-		} else if (option == 8) {
-			String h = JOptionPane.showInputDialog(null, "Entrez l'identifiant de l'emprunteur (Employé = 2,3,6 ou Adhérent = 1,4,5,7,8) : ","Retards dans rendu exemplaires", JOptionPane.INFORMATION_MESSAGE);
-			EmpruntEnCoursDao eEc1 = new EmpruntEnCoursDao(pjdbc);
+	
 			
 
 		}
